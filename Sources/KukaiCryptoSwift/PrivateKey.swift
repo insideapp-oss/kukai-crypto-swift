@@ -97,11 +97,11 @@ public struct PrivateKey: Codable {
 	 - parameter hex: The hex string to sign.
 	 - Returns: A signature from the input.
 	 */
-	public func sign(hex: String) -> [UInt8]? {
+	public func sign(hex: String, prefix: [UInt8] = Prefix.Watermark.operation) -> [UInt8]? {
 		guard let bytes = Sodium.shared.utils.hex2bin(hex) else {
 			return nil
 		}
-		return self.sign(bytes: bytes)
+		return self.sign(bytes: bytes, prefix: prefix)
 	}
 	
 	/**
@@ -109,8 +109,8 @@ public struct PrivateKey: Codable {
 	 - parameter bytes: The raw bytes to sign.
 	 - Returns: A signature from the input.
 	 */
-	public func sign(bytes: [UInt8]) -> [UInt8]? {
-		guard let bytesToSign = prepareBytesForSigning(bytes) else {
+	public func sign(bytes: [UInt8], prefix: [UInt8] = Prefix.Watermark.operation) -> [UInt8]? {
+		guard let bytesToSign = prepareBytesForSigning(bytes, prefix: prefix) else {
 			return nil
 		}
 		
@@ -139,8 +139,8 @@ public struct PrivateKey: Codable {
 	}
 	
 	/// Prepare bytes for signing by applying a watermark and hashing.
-	private func prepareBytesForSigning(_ bytes: [UInt8]) -> [UInt8]? {
-		let watermarkedOperation = Prefix.Watermark.operation + bytes
+	private func prepareBytesForSigning(_ bytes: [UInt8], prefix: [UInt8]) -> [UInt8]? {
+		let watermarkedOperation = prefix + bytes
 		return Sodium.shared.genericHash.hash(message: watermarkedOperation, outputLength: 32)
 	}
 }

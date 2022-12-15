@@ -12,6 +12,7 @@ public enum Prefix {
 	
 	public enum Watermark {
 		public static let operation: [UInt8] = [ 3 ] // 03
+        public static let micheline: [UInt8] = [ 5 ] // 05
 	}
 	
 	public enum Keys {
